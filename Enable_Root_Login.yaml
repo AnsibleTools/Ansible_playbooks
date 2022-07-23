@@ -1,0 +1,29 @@
+---
+- hosts: all
+  gather_facts: no
+  # var:
+  #   root_password:
+  tasks:
+  - name: Enable Root Login
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: "PermitRootLogin yes"
+      state: present
+      backup: yes
+    become: yes
+    notify:
+    - restart ssh
+
+  - name: Update Root user's Password
+    user:
+      name: root
+      update_password: always
+      password: '{{ root_password }}'
+    when: root_password is defined
+
+  handlers:
+  - name: restart ssh
+    systemctl:
+      name: sshd
+      state: restarted
