@@ -1,0 +1,10 @@
+---
+
+- name: add sudo permission
+  hosts: all
+  become: true
+  vars:
+    linux_user: "sadmin"
+  tasks:
+    - name: 'mark user as sudoers'
+      copy: "content={{ linux_user }} ALL=(ALL) NOPASSWD: ALL' dest=/etc/sudoers.d/{{ linux_user }} owner=root group=root mode=400"
